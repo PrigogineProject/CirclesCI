@@ -1,33 +1,13 @@
-version: 2.0
-jobs:
-  build:
-    docker:
-      - image: circleci/node:latest
-    steps:
-      - checkout
-      # - run: npm install
-      # - save_cache:
-      #     key: v1-dependencies-{{ checksum "package.json" }}
-      #     paths:
-      #       - node_modules
-      # - run: npm run build
-      # - run: echo '部署开始'
-      # - run: sudo apt-get update && sudo apt-get install rsync
-      # - restore_cache:
-      #     keys: 
-      #       - v1-dependencies-{{ checksum "package.json" }}
-      #       - v1-dependencies
-      - add_ssh_keys:
-          fingerprints:
-            - "87:4b:86:a9:12:8b:17:ff:e2:11:e4:31:1c:79:ef:2d"
-      - run: echo $REMOTE_HOSTKEY >> ~/.ssh/known_hosts
-      - deploy:
-          name: deploy
-          command: rsync -av index.html $SSH_USER@$SSH_IP:/root/cep
-          # command: ssh root@106.14.41.251
-      - run: echo '部署完'
+# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+# Use a package of configuration called an orb.
+orbs:
+  # Declare a dependency on the welcome-orb
+  welcome: circleci/welcome-orb@0.4.1
+# Orchestrate or schedule a set of jobs
 workflows:
-  version: 2
-  build-deploy:
+  # Name the workflow "welcome"
+  welcome:
+    # Run the welcome/run job in its own container
     jobs:
-    - build
+      - welcome/run
