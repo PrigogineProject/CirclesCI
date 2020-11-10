@@ -1,0 +1,33 @@
+version: 2.0
+jobs:
+  build:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      # - run: npm install
+      # - save_cache:
+      #     key: v1-dependencies-{{ checksum "package.json" }}
+      #     paths:
+      #       - node_modules
+      # - run: npm run build
+      # - run: echo '部署开始'
+      # - run: sudo apt-get update && sudo apt-get install rsync
+      # - restore_cache:
+      #     keys: 
+      #       - v1-dependencies-{{ checksum "package.json" }}
+      #       - v1-dependencies
+      - add_ssh_keys:
+          fingerprints:
+            - "87:4b:86:a9:12:8b:17:ff:e2:11:e4:31:1c:79:ef:2d"
+      - run: echo $REMOTE_HOSTKEY >> ~/.ssh/known_hosts
+      - deploy:
+          name: deploy
+          command: rsync -av index.html $SSH_USER@$SSH_IP:/root/cep
+          # command: ssh root@106.14.41.251
+      - run: echo '部署完'
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+    - build
